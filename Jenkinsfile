@@ -4,7 +4,7 @@ node {
        def MAVEN_HOME = tool name:"M2_HOME", type:'maven'
        def mvnCMD = "${MAVEN_HOME}/bin/mvn"
         stage('checkout') {
-                git credentialsId: 'BITBUCKET_CREDENTIAL', url: 'https://SuneelVenkata@bitbucket.org/SuneelVenkata/sampleapp.git'
+                git url: 'https://github.com/suneel35/sampleapp-JAVA.git'
         }
     
         stage('Build') {
