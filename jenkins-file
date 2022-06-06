@@ -1,0 +1,31 @@
+#!groovy
+node {
+
+        stage('SCM Checkout') {
+		
+        git branch: 'dev', credentialsId: 'SAMPLE', url: 'https://github.com/suneel/sampleapp.git'
+        }
+		
+         stage('Build Image') {
+         sh "docker build -t sampleapp .
+		 sh "docker tag sampleapp push 557112100212.dkr.ecr.us-west-2.amazonaws.com/sampleapp"
+         }
+		
+		stage('Push Docker Image') {
+        withCredentials([string(credentialsId: 'Docker_Hub_Pwd', variable: 'Docker_Hub_Pwd')]) {
+          #sh "docker login -u AWS -p ${Docker_Hub_Pwd}"
+          sh "docker login --username AWS --password-stdin 557112100212.dkr.ecr.us-west-2.amazonaws.com"
+        }
+        sh 'docker push 557112100212.dkr.ecr.us-west-2.amazonaws.com/sampleapp'
+        }
+
+       stage('docker run') {
+        sh "docker run -d -p 3000:3000 --name sampleapp 557112100212.dkr.ecr.us-west-2.amazonaws.com/sampleapp"
+
+         }
+        post { 
+        always { 
+            cleanWs()
+        }
+    }
+}
